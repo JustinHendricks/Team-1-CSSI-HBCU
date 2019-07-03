@@ -47,8 +47,7 @@ def draw_and_bounce(bally, bricky, ballx, brickstart, index, bricks):
         rect(brickstart, bricky, 90, 30)
         moveY = moveY
 
-def draw_brick_row(y, y1, x3, index, bricks):
-    draw_and_bounce(y, y1, x, x3, index, bricks)
+    
     
 def setup():
     size(900,900)
@@ -99,13 +98,13 @@ def draw():
     for index in range(len(brick_set1)):
         y1 = (index // 10) * 30 + 30
         x3 = (index % 10) * 90
-        draw_brick_row(y, y1, x3, index, brick_set1)
+        draw_and_bounce(y, y1, x, x3, index, brick_set1)
     for index in range(len(brick_set2)):
         y2 = (index // 10) * 30 + 350
         x4 = (index % 10) * 90
-        draw_brick_row(y, y2, x4, index, brick_set2)
+        draw_and_bounce(y, y2, x, x4, index, brick_set2)
     for index in range(len(brick_MSet)):
         y2 = (index // 10) * 30 + 145
-        x4 = (index % 10) * 90
-        draw_brick_row(y, y2, x1, index, brick_MSet)
+        x4= (index % 10) * 90
+        draw_and_bounce(y, y2, x, x1, index, brick_MSet)
                 
