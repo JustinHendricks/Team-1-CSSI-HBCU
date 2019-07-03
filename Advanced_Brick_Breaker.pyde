@@ -11,7 +11,7 @@ def setup():
     global moveX, moveX1, moveX2, moveX3, moveX4
     global moveY
     global brick_set1, brick_set2, brick_MSet
-    global score, backg
+    global score, backg,run
     global theme, hit, win, lose, power, break_brick
 
     score = 0
@@ -30,7 +30,7 @@ def setup():
     moveY = -12
     p = random(900)
     u = 0
-    moveU = 8
+    moveU = 3
     brick_set1 = []
     brick_set2 = []
     brick_MSet= []
@@ -52,7 +52,7 @@ def setup():
     mb2 = True
     mb3 = True
     mb4 = True
-    frameRate(50)
+    run = True
 
 def ball(x, y):
     fill(255)
@@ -104,7 +104,7 @@ def moving_bricks(mx, my, y, x, speed, mb):
     mx = mx + speed
     speed = bounce(mx, 0, 500, speed)
     if y >= my and y <= my + 30 and x >= mx and x <= mx + 75 and mb == True:
-        moveY  = -1.02 * moveY
+        moveY  = -1.008 * moveY
     if mb == True:
         fill(255)
         rect(mx, my, 75, 30)
@@ -132,7 +132,9 @@ def pause_play():
             theme.play()
             loop()
 def slow(speed):
-    return speed / 2
+    print(speed)
+    return speed * .5
+
     
 def powerup(p, u, speed):
     fill(148, 0, 211)
@@ -149,6 +151,9 @@ def game_over():
         text('GAMEOVER!!', 140, 420)
         theme.pause()
         lose.play()
+        textSize(100)
+        fill(255)
+        text('Score: ' + str(score), 190, 220)
         noLoop()
     
 def winner():
@@ -169,7 +174,7 @@ def draw():
     global y, y1, y2
     global moveX, moveX1, moveX2, moveX3, moveX4
     global moveY
-    global brick_set1, brick_set2, backg
+    global brick_set1, brick_set2, backg, run
     global theme, hit, win, lose, power, breack_brick
     global p, u, moveU
     background(0)
@@ -203,10 +208,12 @@ def draw():
     moving_bricks(m1, 175, y, x, 13, mb2)
     moving_bricks(m2, 205, y, x, 11, mb3)
     moving_bricks(m3, 235, y, x, 9, mb4)
-    if score >= 2000:
+    if score >= 1000:
         u = powerup(p,u, moveU)
-        if p >= mouseX and p <= mouseX + 100 and u >= 880:
+        if p >= mouseX and p <= mouseX + 100 and u >= 880 and run == True:
             moveY = slow(moveY)
+            power.play()
+            run = False
     pause_play()
     game_over()
     winner()
