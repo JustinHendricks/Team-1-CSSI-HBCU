@@ -109,7 +109,7 @@ def static_bricks(bally, bricky, ballx, brickstart, index, bricks): #Function us
     if bally >= bricky and bally <= bricky + 30 and ballx >= brickstart and ballx <= brickstart + 90 and bricks[index] == True:
         bricks[index] = False
         moveY = -moveY
-        score += 200
+        score += 100
         break_brick.rewind()
         break_brick.play() #Plays break sound
     if bricks[index] == True:
