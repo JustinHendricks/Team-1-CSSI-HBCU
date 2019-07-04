@@ -3,15 +3,15 @@ minim = Minim(this) #Adds library that enables sound
 
 def setup():
     size(900,900)
-    global x
+    global x, padWidth
     global m, m1, m2, m3
     global mb1, mb2, mb3, mb4
-    global p, u, moveU
+    global p, u, moveU, pp, pu, movePU, ep, eu, moveEU
     global y, y1
     global moveX, moveX1, moveX2, moveX3, moveX4
     global moveY
     global brick_set1, brick_set2
-    global score, run
+    global score, run, runP, runE
     global theme, hit, win, lose, power, break_brick, theme2, loser, so_close, applause  #Globalizes all variables
 
     score = 0 #Tracks score
@@ -27,9 +27,16 @@ def setup():
     moveX4 = 8 #Moves 4th moving brick
     moveX = random(3) #Moves ball left and right
     moveY = -12 #Moves ball up and down
+    padWidth = 100
     p = random(900) #Sets x-coordinate for Slow Powerup
     u = 0 #Sets y-coordinate for Slow powerup
     moveU = 3 #Moves y-coordinate of Slow powerup down the screen
+    pp = random(900)
+    pu = 0
+    movePU = 8
+    ep = 450
+    eu = 0
+    moveEU = 12
     brick_set1 = [] #Creates list that will be filled with True values needed to create the upper row of bricks
     brick_set2 = [] #Creates list that will be filled with True values needed to create the lower row of bricks
     
@@ -52,7 +59,9 @@ def setup():
     mb2 = True #Sets 2nd moving brick as True *(UNNECESSARY)*
     mb3 = True #Sets 3rd moving brick as True *(UNNECESSARY)*
     mb4 = True #Sets 4th moving brick as True *(UNNECESSARY)*
-    run = True #Makes it so that the Slow powerup runs only once
+    run = False #Makes it so that the Slow powerup runs only once
+    runP = False
+    runE = False
     
     theme.play() #Plays first theme  to start
     
@@ -60,9 +69,9 @@ def ball(x, y): #Function that creates the ball
     fill(255)
     ellipse(x, y, 25, 25)
     
-def paddle(): #Function that creates the paddle
+def paddle(padWidth): #Function that creates the paddle
     fill (255)
-    rect(mouseX, 880, 100, 20)
+    rect(mouseX, 880, padWidth, 20)
     
 def top_bounce(y, speed): #Fucntion that makes the ball bounce off the top of the screen and stay on the bottom of the screen if it passes the paddle
     global hit, moveY
@@ -81,10 +90,10 @@ def bounce(axis, min_coord, max_coord, speed): #Function used to make things bou
         return -1 * speed
     elif axis >= min_coord or axis <= max_coord:
         return speed
-def Pad_Bounce(axis, min_coord, speed, axis2): #Function that makes ball bounce off the paddle
+def Pad_Bounce(axis, min_coord, speed, axis2, padWidth): #Function that makes ball bounce off the paddle
     global moveX
     global hit
-    if axis >= min_coord and axis <= (min_coord + 100) and axis2 >= 880:
+    if axis >= min_coord and axis <= (min_coord + padWidth) and axis2 >= 880:
         hit.rewind()   
         hit.play() #Plays hit sound
         moveX += random(-4,4) #Randomizes the way the ball comes off the paddle
@@ -121,7 +130,7 @@ def pause_play(): #CFunction used to make a pause and a play button
     while key == 'p': # 'p' = pause
         theme.pause() 
         noLoop()
-        if key == v: # 'v' = start
+        if key == 'v': # 'v' = start
             theme.play()
             loop()
             
@@ -129,11 +138,31 @@ def slow(speed): #Function used to slow ball movement for the Slow powerup
     print(speed)
     return speed * .75
 
+def extend():
+    return 200
+
+def eliminator():
+    global mb1, mb2, mb3, mb4
+    mb1 = False
+    mb2 = False
+    mb3 = False
+    mb4 = False
+
     
-def powerup(p, u, speed): #Function used to create the powerup ball
+def slow_powerup(p, u, speed): #Function used to create the powerup ball
     fill(148, 0, 211)
     ellipse(p, u, 35, 35)
     return u + speed
+
+def paddle_powerup(pp, pu, speed):
+    fill(0, 211, 148)
+    ellipse(pp, pu, 35, 35)
+    return pu + speed
+
+def eliminator_ball(ep, eu, speed):
+    fill(210, 25, 25)
+    ellipse(ep, eu, 35, 35)
+    return eu + speed
         
         
 def game_over(): #Function that creates the game over screen
@@ -148,7 +177,7 @@ def game_over(): #Function that creates the game over screen
         loser.play() #Plays 'loser call' from Spongebob
         textSize(100)
         fill(255)
-        text('Score: ' + str(score), 190, 220) #Prints Score
+        text('Score: ' + str(score), 180, 220) #Prints Score
         noLoop()
     elif score>= 2000 and y >900: 
         background(112, 25, 25)
@@ -176,17 +205,17 @@ def winner(): #Function that makes the winner screen
         win.play() #Plays winner song
         applause.play() #Applause sound effect
         noLoop()
-
+    
 def draw():
     global x, x1, x4
-    global m, m1, m2, m3
+    global m, m1, m2, m3, padWidth
     global mb1, mb2, mb3, mb4
     global y, y1, y2
     global moveX, moveX1, moveX2, moveX3, moveX4
     global moveY
-    global brick_set1, brick_set2, run
+    global brick_set1, brick_set2, run, runP, runE
     global theme, hit, win, lose, power, breack_brick, theme2
-    global p, u, moveU #Globalizes variables used
+    global p, u, moveU, pp, pu, movePU, ep, eu, moveEU #Globalizes variables used
     background(25, 25, 112) #Blue background
     x += moveX #Lets moveX control ball's x-coordinate
     y += moveY #Lets moveY control ball's Y-coordinate
@@ -195,8 +224,8 @@ def draw():
     m2+= moveX3 #Lets moveX3 control moving brick3's x-coordinate
     m3+= moveX4 #Lets moveX4 control moving brick4's x-coordinate
     ball(x, y) #Creates ball
-    paddle() #Creates paddle
-    moveY = Pad_Bounce(x, mouseX, moveY, y) #Makes ball bounce off paddle
+    paddle(padWidth) #Creates paddle
+    moveY = Pad_Bounce(x, mouseX, moveY, y, padWidth) #Makes ball bounce off paddle
     moveY = top_bounce(y, moveY) #Makes ball bounce off top of screen ansd stay at the bottom of the screen
     moveX = bounce(x, 0, 900, moveX) #Makes ball bounce of the walls of the screen
     moveX1 = bounce(m, 0, 870, moveX1) #Makes ball bounce off moving brick1
@@ -218,16 +247,34 @@ def draw():
     moving_bricks(m1, 175, y, x, 13, mb2) #Creates moving brick2
     moving_bricks(m2, 205, y, x, 11, mb3) #Creates moving brick3
     moving_bricks(m3, 235, y, x, 9, mb4) #Creates moving brick4
-    if score >= 1000: #Creates Powerup when score reaches 1000
-        u = powerup(p,u, moveU)
-        if p >= mouseX and p <= mouseX + 100 and u >= 880 and u <= 900 and run == True:
+    if score >= (1000): #Creates Slow Powerup when score is 1000
+        u = slow_powerup(p,u, moveU)
+        if p >= mouseX and p <= mouseX + padWidth and u >= 880 and u <= 900 and run == False:
             moveY = slow(moveY)
             power.play()
-            run = False
-            if moveY < abs(15):
-                textSize(15)
-                fill(148, 0, 211)
-                text('SLOW', 50, 20)
+            run = True
+            if runP == True:
+                padWidth = 100
+                runP = False
+    if score >= 2000: #Creates Extend Powerup when score is 2000
+        pu = paddle_powerup(pp, pu, movePU)
+        if pp >= mouseX and pp <= mouseX + padWidth and pu >= 880 and pu <= 900 and runP == False:
+            padWidth = extend()
+            power.play()
+            runP = True
+            if runP == True:
+                runE = False
+                run = False
+    
+    if score >= 3000:
+        eu = eliminator_ball(ep, eu, moveEU)
+        if ep >= mouseX and ep <= mouseX + padWidth and eu >= 880 and eu <= 900 and runE == False:
+            eliminator()
+            power.play()
+            runE = True
+        if runP == True:
+            padWidth = 100
+            runP = False
     if score > 2000: #Changes song at half way point
         theme.pause()
         theme2.play()
