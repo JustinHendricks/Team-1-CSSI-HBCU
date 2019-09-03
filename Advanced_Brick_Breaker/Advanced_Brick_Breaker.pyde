@@ -236,8 +236,8 @@ def draw():
     fill(255)
     text("SCORE: " + str(score), 420, 20) #Shows score constantly on the top of the screen
     for index in range(len(brick_set1)): #This for loop creates the top row of static bricks
-        y1 = (index // 10) * 30 + 30
-        x1 = (index % 10) * 90
+        y1 = (index // 10) * 30 + 30 #'//' performs division then discards the remainder/decimal. This means (index//10) will equal zero for all indexes 0-10(creating the bottom set of bricks in the row), then one for all indexes 10-20(moving the second set of bricks up)
+        x1 = (index % 10) * 90 #'a % b' gives the remainder of 1 / 10. This causes the value of (index % 10) to climb up from 0-9 for each index 0-9. Multiplying this by the width of the rectangle causes the next brick to be made next to the previous brick
         static_bricks(y, y1, x, x1, index, brick_set1)
     for index in range(len(brick_set2)): #This for loop creates the bottom row of static bricks
         y2 = (index // 10) * 30 + 350
